@@ -1,0 +1,42 @@
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+/home/adonis/miniconda3/envs/socnavgym/lib/python3.11/site-packages/requests/__init__.py:86: RequestsDependencyWarning: Unable to find acceptable character detection dependency (chardet or charset_normalizer).
+  warnings.warn(
+[checkpoint] step_00000000.pt (untrained, rl episode 0)
+[il] 3000 ORCA episodes: success 0.63 collision 0.37, memory 55526, 62s
+[il] 50 epochs, last average loss 6.37e-04, 164s
+[checkpoint] step_00056026.pt (imitation, rl episode 0)
+[val] rl episode 0: success 0.76 collision 0.23 timeout 0.01 return 0.417, 168s
+[checkpoint] step_00056684.pt (reinforcement, rl episode 25)
+[checkpoint] step_00058782.pt (reinforcement, rl episode 100)
+[checkpoint] step_00061546.pt (reinforcement, rl episode 225)
+[checkpoint] step_00065831.pt (reinforcement, rl episode 400)
+[checkpoint] step_00071750.pt (reinforcement, rl episode 625)
+[checkpoint] step_00078680.pt (reinforcement, rl episode 900)
+[val] rl episode 1000: success 0.83 collision 0.17 timeout 0.00 return 0.449, 699s
+[checkpoint] step_00086978.pt (reinforcement, rl episode 1225)
+[checkpoint] step_00095718.pt (reinforcement, rl episode 1600)
+[val] rl episode 2000: success 0.85 collision 0.15 timeout 0.00 return 0.470, 1271s
+[checkpoint] step_00106271.pt (reinforcement, rl episode 2025)
+[checkpoint] step_00117627.pt (reinforcement, rl episode 2500)
+[val] rl episode 3000: success 0.85 collision 0.15 timeout 0.00 return 0.475, 1877s
+[checkpoint] step_00131127.pt (reinforcement, rl episode 3025)
+[checkpoint] step_00145136.pt (reinforcement, rl episode 3600)
+[val] rl episode 4000: success 0.91 collision 0.09 timeout 0.00 return 0.516, 2479s
+[checkpoint] step_00159773.pt (reinforcement, rl episode 4225)
+[checkpoint] step_00175492.pt (reinforcement, rl episode 4900)
+[val] rl episode 5000: success 0.91 collision 0.09 timeout 0.00 return 0.529, 3076s
+[checkpoint] step_00192527.pt (reinforcement, rl episode 5625)
+[val] rl episode 6000: success 0.89 collision 0.11 timeout 0.00 return 0.518, 3686s
+[checkpoint] step_00210347.pt (reinforcement, rl episode 6400)
+[val] rl episode 7000: success 0.91 collision 0.09 timeout 0.00 return 0.530, 4285s
+[checkpoint] step_00228939.pt (reinforcement, rl episode 7225)
+[val] rl episode 8000: success 0.93 collision 0.07 timeout 0.00 return 0.548, 4876s
+[checkpoint] step_00249041.pt (reinforcement, rl episode 8100)
+[val] rl episode 9000: success 0.94 collision 0.06 timeout 0.00 return 0.552, 5467s
+[checkpoint] step_00270313.pt (reinforcement, rl episode 9025)
+[checkpoint] step_00292751.pt (reinforcement, rl episode 10000)
+[val] final: success 0.95 collision 0.05 timeout 0.00, 6053s
+done

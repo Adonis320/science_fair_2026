@@ -1,0 +1,516 @@
+{
+ "source": "socnavgym",
+ "algorithm": "sarl",
+ "config": "humans_only.yaml",
+ "seeds": [
+  5
+ ],
+ "checkpoints": [
+  {
+   "checkpoint": 0,
+   "file": "checkpoint_000.json",
+   "training_steps": 0,
+   "training_episodes": 0,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 1.0,
+    "too_close_rate": 0.0,
+    "mean_return": 0.0,
+    "mean_intrusions": 16.0,
+    "mean_min_dist": 0.228
+   },
+   "evaluation": {
+    "success": 0.0,
+    "too_close": 0.0,
+    "collision": 0.625,
+    "timeout": 0.375,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 1,
+   "file": "checkpoint_001.json",
+   "training_steps": 56026,
+   "training_episodes": 3000,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.883
+   },
+   "evaluation": {
+    "success": 0.25,
+    "too_close": 0.3,
+    "collision": 0.45,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 2,
+   "file": "checkpoint_002.json",
+   "training_steps": 56684,
+   "training_episodes": 3025,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.889
+   },
+   "evaluation": {
+    "success": 0.15,
+    "too_close": 0.525,
+    "collision": 0.325,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 3,
+   "file": "checkpoint_003.json",
+   "training_steps": 58782,
+   "training_episodes": 3100,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.889
+   },
+   "evaluation": {
+    "success": 0.2,
+    "too_close": 0.4,
+    "collision": 0.4,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 4,
+   "file": "checkpoint_004.json",
+   "training_steps": 61546,
+   "training_episodes": 3225,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.889
+   },
+   "evaluation": {
+    "success": 0.2,
+    "too_close": 0.425,
+    "collision": 0.375,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 5,
+   "file": "checkpoint_005.json",
+   "training_steps": 65831,
+   "training_episodes": 3400,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.883
+   },
+   "evaluation": {
+    "success": 0.15,
+    "too_close": 0.5,
+    "collision": 0.35,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 6,
+   "file": "checkpoint_006.json",
+   "training_steps": 71750,
+   "training_episodes": 3625,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.883
+   },
+   "evaluation": {
+    "success": 0.1,
+    "too_close": 0.425,
+    "collision": 0.475,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 7,
+   "file": "checkpoint_007.json",
+   "training_steps": 78680,
+   "training_episodes": 3900,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.656
+   },
+   "evaluation": {
+    "success": 0.1,
+    "too_close": 0.475,
+    "collision": 0.425,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 8,
+   "file": "checkpoint_008.json",
+   "training_steps": 86978,
+   "training_episodes": 4225,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.641
+   },
+   "evaluation": {
+    "success": 0.125,
+    "too_close": 0.55,
+    "collision": 0.325,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 9,
+   "file": "checkpoint_009.json",
+   "training_steps": 95718,
+   "training_episodes": 4600,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.534
+   },
+   "evaluation": {
+    "success": 0.2,
+    "too_close": 0.5,
+    "collision": 0.3,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 10,
+   "file": "checkpoint_010.json",
+   "training_steps": 106271,
+   "training_episodes": 5025,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 0.0,
+    "mean_min_dist": 0.497
+   },
+   "evaluation": {
+    "success": 0.175,
+    "too_close": 0.6,
+    "collision": 0.225,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 11,
+   "file": "checkpoint_011.json",
+   "training_steps": 117627,
+   "training_episodes": 5500,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.25,
+    "mean_intrusions": 1.0,
+    "mean_min_dist": 0.445
+   },
+   "evaluation": {
+    "success": 0.125,
+    "too_close": 0.725,
+    "collision": 0.15,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 12,
+   "file": "checkpoint_012.json",
+   "training_steps": 131127,
+   "training_episodes": 6025,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.972,
+    "mean_intrusions": 9.0,
+    "mean_min_dist": 0.056
+   },
+   "evaluation": {
+    "success": 0.25,
+    "too_close": 0.65,
+    "collision": 0.1,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 13,
+   "file": "checkpoint_013.json",
+   "training_steps": 145136,
+   "training_episodes": 6600,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.968,
+    "mean_intrusions": 11.0,
+    "mean_min_dist": 0.042
+   },
+   "evaluation": {
+    "success": 0.15,
+    "too_close": 0.75,
+    "collision": 0.1,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 14,
+   "file": "checkpoint_014.json",
+   "training_steps": 159773,
+   "training_episodes": 7225,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.825,
+    "mean_intrusions": 25.0,
+    "mean_min_dist": 0.002
+   },
+   "evaluation": {
+    "success": 0.175,
+    "too_close": 0.775,
+    "collision": 0.05,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 15,
+   "file": "checkpoint_015.json",
+   "training_steps": 175492,
+   "training_episodes": 7900,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 1.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": -0.33,
+    "mean_intrusions": 21.0,
+    "mean_min_dist": 0.0
+   },
+   "evaluation": {
+    "success": 0.2,
+    "too_close": 0.7,
+    "collision": 0.1,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 16,
+   "file": "checkpoint_016.json",
+   "training_steps": 192527,
+   "training_episodes": 8625,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.934,
+    "mean_intrusions": 16.0,
+    "mean_min_dist": 0.014
+   },
+   "evaluation": {
+    "success": 0.175,
+    "too_close": 0.7,
+    "collision": 0.125,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 17,
+   "file": "checkpoint_017.json",
+   "training_steps": 210347,
+   "training_episodes": 9400,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.905,
+    "mean_intrusions": 13.0,
+    "mean_min_dist": 0.009
+   },
+   "evaluation": {
+    "success": 0.25,
+    "too_close": 0.675,
+    "collision": 0.075,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 18,
+   "file": "checkpoint_018.json",
+   "training_steps": 228939,
+   "training_episodes": 10225,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.961,
+    "mean_intrusions": 17.0,
+    "mean_min_dist": 0.025
+   },
+   "evaluation": {
+    "success": 0.225,
+    "too_close": 0.65,
+    "collision": 0.125,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 19,
+   "file": "checkpoint_019.json",
+   "training_steps": 249041,
+   "training_episodes": 11100,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.934,
+    "mean_intrusions": 16.0,
+    "mean_min_dist": 0.048
+   },
+   "evaluation": {
+    "success": 0.175,
+    "too_close": 0.7,
+    "collision": 0.125,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 20,
+   "file": "checkpoint_020.json",
+   "training_steps": 270313,
+   "training_episodes": 12025,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 1.0,
+    "mean_return": 0.936,
+    "mean_intrusions": 7.0,
+    "mean_min_dist": 0.006
+   },
+   "evaluation": {
+    "success": 0.2,
+    "too_close": 0.675,
+    "collision": 0.125,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  },
+  {
+   "checkpoint": 21,
+   "file": "checkpoint_021.json",
+   "training_steps": 292751,
+   "training_episodes": 13000,
+   "n_episodes": 1,
+   "aggregate": {
+    "success_rate": 1.0,
+    "collision_rate": 0.0,
+    "timeout_rate": 0.0,
+    "too_close_rate": 0.0,
+    "mean_return": 1.0,
+    "mean_intrusions": 2.0,
+    "mean_min_dist": 0.258
+   },
+   "evaluation": {
+    "success": 0.175,
+    "too_close": 0.8,
+    "collision": 0.025,
+    "timeout": 0.0,
+    "episodes": 40
+   }
+  }
+ ]
+}

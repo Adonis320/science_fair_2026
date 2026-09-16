@@ -1,0 +1,109 @@
+# Humans-only scenario for SARL (CrowdNav): no walls, no furniture, 6 walking people.
+# Kinematics and sizes follow CrowdNav's env.config: 0.25 s steps, radius 0.3 m, 1 m/s for robot and people.
+# The robot is a unicycle: max_rotation = (pi/4) / time_step, so one step can turn by SARL's +-pi/4.
+# Reward: CrowdNav's SARL reward (sarl/crowdnav_reward.py), which SARL's one-step lookahead also uses.
+
+rendering:
+    resolution_view: 1000
+    milliseconds: 30
+
+episode:
+    episode_length: 100          # steps (25 s, CrowdNav time_limit)
+    time_step: 0.25
+    end_with_collision: True
+
+robot:
+    robot_radius: 0.3
+    goal_radius: 0.3                # CrowdNav: goal reached within the robot radius
+    robot_type: "diff-drive"
+    goal_orientation_factor: 2   # goal orientation is not required
+
+human:
+    use_visibility_check: False
+    human_diameter: 0.6
+    human_goal_radius: 0.4
+    human_policy: "orca"
+    gaze_angle: 3.14159
+    fov_angle: 6.2831853
+    prob_to_avoid_robot: 0.0     # people ignore the robot: it has to be the polite one
+    use_prm: False
+    prm_radius_margin: 0.0
+    draw_waypoints: False
+    prm_max_retries: 1
+    waypoint_switch_radius: 0.4
+
+laptop:
+    laptop_width: 0.4
+    laptop_length: 0.6
+
+plant:
+    plant_radius: 0.35
+
+table:
+    table_width: 0.9
+    table_length: 1.8
+
+wall:
+    wall_thickness: 0.2
+
+human-human-interaction:
+    interaction_radius: 0.72
+    interaction_goal_radius: 1.44
+    noise_variance: 0.005
+
+human-laptop-interaction:
+    human_laptop_distance: 0.3
+
+env:
+    margin: 0.6
+    max_advance_human: 1.0       # m/s, CrowdNav human v_pref
+    max_rotation_human: 1.57
+    max_advance_robot: 1.0       # m/s, CrowdNav robot v_pref
+    max_rotation: 3.14159        # rad/s = (pi/4) / time_step
+    wall_segment_size: 1.0
+    speed_threshold: 0.005
+    crowd_dispersal_probability: 0.0
+    human_laptop_dispersal_probability: 0.0
+    crowd_formation_probability: 0.0
+    human_laptop_formation_probability: 0.0
+
+    reward_file: "sarl/crowdnav_reward.py"   # relative to the training/ directory
+    cuda_device: 0
+
+    min_static_humans: 0
+    max_static_humans: 0
+    min_dynamic_humans: 6
+    max_dynamic_humans: 6
+
+    min_tables: 0
+    max_tables: 0
+    min_plants: 0
+    max_plants: 0
+    min_laptops: 0
+    max_laptops: 0
+
+    min_h_h_dynamic_interactions: 0
+    max_h_h_dynamic_interactions: 0
+    min_h_h_dynamic_interactions_non_dispersing: 0
+    max_h_h_dynamic_interactions_non_dispersing: 0
+    min_h_h_static_interactions: 0
+    max_h_h_static_interactions: 0
+    min_h_h_static_interactions_non_dispersing: 0
+    max_h_h_static_interactions_non_dispersing: 0
+    min_human_in_h_h_interactions: 0
+    max_human_in_h_h_interactions: 0
+
+    # human-laptop interactions are disabled to keep scenes simple. (Groups and laptops use the
+    # global random modules; socnav_common.SeededReset seeds those too.)
+    min_h_l_interactions: 0
+    max_h_l_interactions: 0
+    min_h_l_interactions_non_dispersing: 0
+    max_h_l_interactions_non_dispersing: 0
+
+    get_padded_observations: False
+    set_shape: "no-walls"
+    add_corridors: False
+    min_map_x: 10
+    max_map_x: 10
+    min_map_y: 10
+    max_map_y: 10

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Comment un robot apprend à circuler parmi les gens</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="loading" class="loading">Chargement…</div>
+<div id="outcome" class="outcome"></div>
+<div id="scene-label" class="scene-label"></div>
+
+<div id="controls">
+  <button id="play" title="Lecture / pause (espace)">❚❚</button>
+  <label for="progress">Entraînement</label>
+  <input id="progress" type="range" min="0" max="0" value="0" step="1">
+  <span id="progress-text"></span>
+  <div class="toggles">
+    <label class="toggle" id="options-toggle"><input id="show-options" type="checkbox" checked> Choix du robot</label>
+    <label class="toggle"><input id="show-curves" type="checkbox" checked> Courbes</label>
+    <label class="toggle" id="rewards-toggle"><input id="show-rewards" type="checkbox" checked> Récompenses</label>
+    <label class="toggle"><input id="show-zones" type="checkbox" checked> Distances sociales</label>
+    <label class="toggle" id="attention-toggle"><input id="show-attention" type="checkbox" checked> Attention</label>
+    <label class="toggle"><input id="show-reactions" type="checkbox" checked> Réactions</label>
+  </div>
+</div>
+<button id="help-button" class="help-button" title="Guide pour l'animateur" aria-label="Guide pour l'animateur">?</button>
+<div id="help-overlay" class="help-overlay" hidden>
+  <div class="help-dialog" role="dialog" aria-modal="true" aria-label="Guide pour l'animateur">
+    <button id="help-close" class="help-close" aria-label="Fermer le guide">×</button>
+    <iframe id="help-frame" title="Guide pour l'animateur"></iframe>
+  </div>
+</div>
+<div class="right-column">
+  <div id="legend" class="legend"></div>
+  <div id="rewards" class="legend rewards"></div>
+  <div id="attention-legend" class="legend attention-legend"></div>
+</div>
+
+<div class="left-column">
+<div id="curves" class="curves">
+  <div class="curves-title">Progrès du robot</div>
+  <canvas id="curves-canvas"></canvas>
+  <div id="curves-series" class="curves-series"></div>
+</div>
+<div id="options-legend" class="legend options-legend"></div>
+</div>
+
+<!-- Classic scripts only: must also work when opened via file:// -->
+<script src="vendor/three.classic.js"></script>
+<script src="vendor/three-addons.classic.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

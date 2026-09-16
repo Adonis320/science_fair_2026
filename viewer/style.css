@@ -1,0 +1,81 @@
+html, body { margin: 0; height: 100%; overflow: hidden; background: #1b1d22; color: #fff;
+  font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; }
+#stage { position: fixed; inset: 0; }
+.outcome { position: fixed; top: 32px; left: 50%; transform: translateX(-50%);
+  font-size: 64px; font-weight: 800; padding: 8px 36px; border-radius: 16px;
+  opacity: 0; transition: opacity .3s; pointer-events: none; }
+.outcome.show { opacity: 1; }
+.outcome.collision { background: #d62f2f; }
+.outcome.timeout { background: #6b6f7a; }
+.outcome.too_close { background: #e08a00; }
+.outcome.success { background: #1f9d55; }
+.scene-label { position: fixed; top: 40px; left: 40px; font-size: 30px; background: rgba(0,0,0,.55); padding: 8px 18px; border-radius: 10px; }
+#controls { position: fixed; left: 40px; right: 40px; bottom: 32px; display: flex; gap: 20px;
+  align-items: center; font-size: 30px; background: rgba(0,0,0,.45); padding: 16px 28px; border-radius: 16px; }
+#controls input[type=range] { flex: 1; min-width: 420px; height: 40px; accent-color: #4fb3ff; }
+#controls button { font-size: 28px; width: 64px; height: 56px; border-radius: 12px; border: 0; }
+#progress-text { min-width: 220px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #1b1d22; z-index: 10; }
+[hidden] { display: none !important; }
+.toggle { display: flex; align-items: center; gap: 10px; white-space: nowrap; cursor: pointer; font-size: 24px; }
+.toggle input { width: 32px; height: 32px; accent-color: #4fb3ff; cursor: pointer; }
+.legend { position: fixed; top: 32px; right: 40px; background: rgba(0,0,0,.55); padding: 14px 20px;
+  border-radius: 12px; font-size: 24px; display: grid; gap: 8px; }
+.legend-title { font-weight: 700; margin-bottom: 2px; }
+.legend-row { display: grid; grid-template-columns: 30px auto auto; align-items: center; gap: 12px; }
+.legend-range { opacity: .75; text-align: right; }
+.swatch { width: 26px; height: 26px; border-radius: 50%; background: var(--c); opacity: .85; }
+.swatch.outline { background: transparent; border: 4px solid var(--c); box-sizing: border-box; }
+.curves { position: fixed; top: 32px; left: 40px; width: 480px; background: rgba(0,0,0,.55);
+  padding: 14px 20px 16px; border-radius: 12px; box-sizing: border-box; }
+.curves-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+#curves-canvas { width: 100%; height: 290px; display: block; }
+.curves-series { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 20px; margin-top: 8px; }
+.curves-series label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.curves-series input { width: 24px; height: 24px; accent-color: #4fb3ff; cursor: pointer; }
+.series-swatch { width: 22px; height: 6px; border-radius: 3px; background: var(--c); }
+.series-swatch.dot { width: 14px; height: 14px; border-radius: 50%; }
+.options-legend { top: auto; bottom: 150px; width: 300px; box-sizing: border-box; }
+.options-scale { height: 18px; border-radius: 9px; }
+.options-scale-labels { display: flex; justify-content: space-between; font-size: 20px; opacity: .8; margin-top: -2px; }
+.toggles { display: grid; grid-template-columns: auto auto auto; gap: 4px 22px; }
+.toggles .toggle { font-size: 22px; }
+.toggles .toggle input { width: 26px; height: 26px; }
+.rewards { width: 400px; box-sizing: border-box; }
+.rewards-intro { font-size: 20px; opacity: .8; }
+.reward-row { display: grid; grid-template-columns: 78px 1fr; gap: 12px; align-items: center; font-size: 20px; line-height: 1.25; }
+.reward-value { font-weight: 800; font-size: 22px; text-align: center; border-radius: 8px; padding: 2px 0; }
+.reward-value.good { background: #1f9d55; }
+.reward-value.bad { background: #d62f2f; }
+.reward-value.neutral { background: #6b6f7a; }
+.attention-legend { width: 400px; box-sizing: border-box; }
+.attention-row { grid-template-columns: 30px 1fr; font-size: 20px; line-height: 1.25; }
+.swatch.halo { background: transparent; border: 6px solid var(--c); box-shadow: 0 0 10px var(--c); box-sizing: border-box; }
+.space-models { display: flex; gap: 6px; margin: 2px 0 6px; }
+.space-models button { flex: 1; font: inherit; font-size: 20px; padding: 6px 8px; border-radius: 8px; border: 2px solid #6b6f7a;
+  background: transparent; color: #fff; cursor: pointer; }
+.space-models button.active { background: #4fb3ff; border-color: #4fb3ff; color: #1b1d22; font-weight: 700; }
+.gauss-scale { height: 18px; border-radius: 9px; background: linear-gradient(90deg, rgba(229,57,53,0.05), rgba(229,57,53,0.9)); border: 1px solid rgba(255,255,255,.2); }
+.legend-note { font-size: 18px; opacity: .8; max-width: 340px; }
+/* Right-hand panels stack instead of sitting at fixed heights */
+.right-column { position: fixed; top: 96px; right: 40px; width: 400px; display: flex; flex-direction: column; gap: 14px; }
+.right-column .legend { position: static; width: 100%; box-sizing: border-box; }
+/* Left-hand panels stack too */
+.left-column { position: fixed; top: 32px; left: 40px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.left-column .curves, .left-column .legend { position: static; }
+.left-column .options-legend { width: 300px; }
+.legend-range { white-space: nowrap; }
+.right-column .legend-row { font-size: 22px; }
+/* "?" button (top-right corner) and the presenter guide shown over the demo */
+.help-button { position: fixed; top: 32px; right: 40px; width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.35); background: rgba(0,0,0,.55); color: #fff; font: 700 26px/1 "DejaVu Sans", Arial, sans-serif;
+  cursor: pointer; z-index: 20; }
+.help-button:hover, .help-button:focus-visible { background: #4fb3ff; color: #1b1d22; border-color: #4fb3ff; outline: none; }
+.help-overlay { position: fixed; inset: 0; background: rgba(10,12,16,.72); z-index: 30; display: flex;
+  align-items: center; justify-content: center; padding: 32px; }
+.help-dialog { position: relative; width: min(960px, 100%); height: 100%; border-radius: 14px; overflow: hidden;
+  background: #f3f5f7; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.help-dialog iframe { width: 100%; height: 100%; border: 0; display: block; }
+.help-close { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 0;
+  background: #1c222c; color: #fff; font: 700 26px/1 "DejaVu Sans", Arial, sans-serif; cursor: pointer; z-index: 1; }
+.help-close:hover, .help-close:focus-visible { background: #0a78c8; outline: none; }

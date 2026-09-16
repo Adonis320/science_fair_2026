@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Guide for presenters, opened from the "?" button of the demo. Same content as GUIDE_ANIMATEUR.md. Works offline. -->
+<title>Guide du robot poli</title>
+
+<style>
+:root {
+  --ground: #f3f5f7;
+  --surface: #ffffff;
+  --ink: #1c222c;
+  --ink-soft: #4a5362;
+  --line: #d9dee5;
+  --accent: #0a78c8;
+  --say: #e6e0d2;
+  --say-ink: #3d3527;
+  --good: #1f8a4c;
+  --bad: #c62828;
+  --neutral: #6b7280;
+  --chip: #1c222c;
+  --chip-ink: #f3f5f7;
+  --display: "DejaVu Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --body: "DejaVu Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "DejaVu Sans Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #14181e; --surface: #1c222b; --ink: #e7ebf0; --ink-soft: #a9b2bf; --line: #2e3643;
+    --accent: #5cb8ff; --say: #2d2a22; --say-ink: #ece3cf; --good: #43c47a; --bad: #ff6b6b; --neutral: #9aa3af;
+    --chip: #e7ebf0; --chip-ink: #14181e;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #14181e; --surface: #1c222b; --ink: #e7ebf0; --ink-soft: #a9b2bf; --line: #2e3643;
+  --accent: #5cb8ff; --say: #2d2a22; --say-ink: #ece3cf; --good: #43c47a; --bad: #ff6b6b; --neutral: #9aa3af;
+  --chip: #e7ebf0; --chip-ink: #14181e;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font: 17px/1.55 var(--body);
+  padding: 48px 20px 72px;
+}
+.page { max-width: 44rem; margin: 0 auto; display: grid; gap: 40px; }
+
+header { display: grid; gap: 10px; }
+.eyebrow { font: 700 13px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 800 clamp(2rem, 5vw, 2.8rem)/1.05 var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.lede { color: var(--ink-soft); margin: 0; }
+
+.pitch {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px 22px; display: grid; gap: 6px;
+}
+.pitch h2 { font: 700 13px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin: 0; }
+.pitch p { margin: 0; font-size: 18px; }
+
+nav.order { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 14px/1.4 var(--mono); color: var(--ink-soft); }
+nav.order a { color: inherit; text-decoration: none; border-bottom: 1px dashed var(--line); }
+nav.order a:hover, nav.order a:focus-visible { color: var(--accent); border-color: var(--accent); outline: none; }
+
+section.step { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0 16px; padding-top: 28px; border-top: 1px solid var(--line); }
+.num { font: 800 1.9rem/1 var(--display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.step-body { display: grid; gap: 12px; min-width: 0; }
+h2.title { font: 700 1.45rem/1.2 var(--display); margin: 0; text-wrap: balance; }
+.on-screen { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; color: var(--ink-soft); }
+.chip { font: 500 13px/1 var(--mono); background: var(--chip); color: var(--chip-ink); padding: 5px 8px; border-radius: 4px; }
+ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+li::marker { color: var(--accent); }
+strong { font-weight: 700; }
+
+
+.figures { display: flex; flex-wrap: wrap; gap: 8px; }
+.fig { font: 500 14px/1.3 var(--mono); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; background: var(--surface); font-variant-numeric: tabular-nums; }
+.fig em { font-style: normal; font-weight: 700; color: var(--ink); }
+.dip em { color: var(--bad); }
+
+table.rewards { border-collapse: collapse; width: 100%; }
+table.rewards td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: baseline; }
+table.rewards td:first-child { width: 5.5rem; }
+.val { display: inline-block; min-width: 4.2rem; text-align: center; font: 700 15px/1 var(--mono); color: #fff; border-radius: 5px; padding: 6px 0; }
+.val.good { background: var(--good); } .val.bad { background: var(--bad); } .val.neutral { background: var(--neutral); }
+
+.models { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.model { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--surface); display: grid; gap: 4px; }
+.model h3 { margin: 0; font: 700 15px/1.2 var(--mono); }
+.model p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+
+.warning { border-left: 3px solid var(--bad); padding: 2px 0 2px 14px; }
+
+.practical { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 12px; }
+.practical h2 { font: 700 1.3rem/1.2 var(--display); margin: 0; }
+dl { margin: 0; display: grid; grid-template-columns: 9rem 1fr; gap: 8px 16px; }
+dt { font: 700 13px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); }
+dd { margin: 0; }
+kbd { font: 500 13px/1 var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 2px 6px; background: var(--ground); }
+code { font: 500 14px/1 var(--mono); }
+
+@media (max-width: 560px) {
+  body { padding-block: 28px 48px; }
+  section.step { grid-template-columns: 1fr; gap: 6px; }
+  .models { grid-template-columns: 1fr; }
+  dl { grid-template-columns: 1fr; gap: 2px; }
+  dd { margin-bottom: 8px; }
+}
+</style>
+
+</head>
+<body>
+<main class="page">
+  <header>
+    <span class="eyebrow">Fête de la Science · guide d'animation</span>
+    <h1>Le robot qui apprend à passer parmi les gens</h1>
+    <p class="lede">À lire en 5 minutes avant d'animer. Les sections suivent l'ordre conseillé pour présenter.</p>
+  </header>
+
+  <div class="pitch">
+    <h2>En 30 secondes</h2>
+    <p>Un robot virtuel apprend, par essais et erreurs, à traverser une salle pleine de gens pour atteindre un point, sans les heurter. Rien n'est inventé : chaque trajet est rejoué à partir d'une vraie simulation (SocNavGym) et d'un vrai réseau de neurones (SARL), sauvegardé à différents moments de son apprentissage.</p>
+  </div>
+
+  <nav class="order" aria-label="Ordre de présentation">
+    <a href="#scene">1 Scène</a><a href="#curseur">2 Curseur</a><a href="#recompenses">3 Récompenses</a><a href="#courbe">4 Courbe</a>
+    <a href="#choix">5 Choix</a><a href="#attention">6 Attention</a><a href="#distances">7 Distances</a><a href="#reactions">8 Réactions</a><a href="#limites">9 Limites</a>
+  </nav>
+
+  <section class="step" id="scene">
+    <span class="num">1</span>
+    <div class="step-body">
+      <h2 class="title">La scène</h2>
+      <ul>
+        <li>Salle de 10 × 10 m, 6 personnes qui marchent vers des destinations au hasard.</li>
+        <li>Le robot (type TurtleBot, flèche jaune = sa direction) doit atteindre le <strong>cercle vert</strong>.</li>
+        <li>Les personnes ne s'écartent pas pour lui : c'est au robot d'être poli.</li>
+        <li>C'est <strong>toujours la même salle</strong>, avec les mêmes personnes aux mêmes endroits : on compare le robot à lui-même.</li>
+        <li>Sortir de la salle compte comme une collision (le mur).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="step" id="curseur">
+    <span class="num">2</span>
+    <div class="step-body">
+      <h2 class="title">Le curseur et le numéro d'essai</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Entraînement</span><span class="chip">Essai 13 000</span></div>
+      <ul>
+        <li>Chaque position du curseur = le « cerveau » du robot sauvegardé après N essais.</li>
+        <li><strong>Essai 0</strong> : il ne sait rien. Il n'avance pas vers le but, le temps s'écoule.</li>
+        <li><strong>Essais 1 à 3 000</strong> : il imite un robot « professeur » (un algorithme classique, ORCA). Il bouge, mais sort vite de la salle.</li>
+        <li><strong>Essais 3 000 à 13 000</strong> : il s'entraîne seul et apprend de ses erreurs.</li>
+        <li>En fin de trajet : <strong>Réussi !</strong>, <strong>Collision !</strong> ou <strong>Temps écoulé</strong>.</li>
+      </ul>
+      <div class="figures">
+        <span class="fig">Collisions jusqu'à <em>5 500</em> essais</span>
+        <span class="fig">1<sup>re</sup> réussite à <em>6 025</em> · 15 s</span>
+        <span class="fig dip">Retouche quelqu'un à <em>7 900</em></span>
+        <span class="fig">Traverse en <em>11 s</em> à 13 000</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="recompenses">
+    <span class="num">3</span>
+    <div class="step-body">
+      <h2 class="title">Les récompenses</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Récompenses</span></div>
+      <table class="rewards">
+        <tr><td><span class="val good">+1</span></td><td>Atteindre l'objectif</td></tr>
+        <tr><td><span class="val bad">−0,25</span></td><td>Toucher une personne (l'essai s'arrête)</td></tr>
+        <tr><td><span class="val bad">−</span></td><td>Passer à moins de 20 cm d'une personne : plus il est près, plus il perd</td></tr>
+        <tr><td><span class="val neutral">0</span></td><td>Tout le reste</td></tr>
+      </table>
+      <ul><li>Personne ne lui explique comment faire : il cherche seulement à gagner le plus de points possible.</li></ul>
+    </div>
+  </section>
+
+  <section class="step" id="courbe">
+    <span class="num">4</span>
+    <div class="step-body">
+      <h2 class="title">La courbe « Progrès du robot »</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Courbes</span><span class="chip">Objectif atteint</span><span class="chip">Collision</span></div>
+      <ul>
+        <li>Mesurée sur <strong>40 salles de test différentes</strong> à chaque sauvegarde, pas seulement sur celle affichée.</li>
+        <li><strong>Vert</strong> : % d'essais où il atteint l'objectif. <strong>Rouge</strong> : % de collisions. Le repère suit le curseur.</li>
+        <li><strong>Ce n'est pas linéaire</strong> : il progresse, régresse, puis se stabilise.</li>
+        <li>L'axe n'est pas à l'échelle : il y a plus de sauvegardes au début, là où il apprend le plus vite.</li>
+      </ul>
+      <div class="figures">
+        <span class="fig">Départ <em>0 %</em></span>
+        <span class="fig">Après imitation <em>55 %</em></span>
+        <span class="fig">3 025 essais <em>68 %</em></span>
+        <span class="fig dip">3 625 essais <em>52 %</em></span>
+        <span class="fig">5 500 essais <em>85 %</em></span>
+        <span class="fig">13 000 essais <em>98 %</em></span>
+        <span class="fig">Collisions <em>62 % → 2 %</em></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="choix">
+    <span class="num">5</span>
+    <div class="step-body">
+      <h2 class="title">Le choix du robot</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Choix du robot</span> l'éventail de points devant le robot</div>
+      <ul>
+        <li>4 fois par seconde, il envisage <strong>81 mouvements</strong> : 16 directions (jusqu'à 45° à gauche ou à droite) × 5 vitesses, plus « s'arrêter ».</li>
+        <li>Chaque point = un mouvement. Direction du point = où il tournerait ; distance au robot = sa vitesse (exagérée pour être visible).</li>
+        <li>Couleur = score estimé : la récompense immédiate plus ce qu'il pense gagner ensuite. <strong>Violet = mauvais, jaune = meilleur.</strong> Le <strong>cercle blanc</strong> marque le mouvement choisi : le meilleur.</li>
+        <li>Au début, les couleurs sont en désordre ; à la fin, le jaune se trouve clairement du côté qui contourne les gens.</li>
+        <li>Pour prévoir, il suppose que chaque personne continue tout droit à la même vitesse.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="step" id="attention">
+    <span class="num">6</span>
+    <div class="step-body">
+      <h2 class="title">L'attention</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Attention</span> halos bleus sous les personnes</div>
+      <ul>
+        <li>Le réseau SARL ne regarde pas tout le monde pareil : il donne un poids à chaque personne (le total fait 100 %).</li>
+        <li><strong>Halo plus brillant</strong> = personne qui compte plus dans sa décision.</li>
+        <li>Robot non entraîné : tous les halos sont pareils. Robot entraîné : il se concentre sur quelques personnes, pas forcément les plus proches, plutôt celles qui vont croiser son chemin.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="step" id="distances">
+    <span class="num">7</span>
+    <div class="step-body">
+      <h2 class="title">Les distances sociales</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Distances sociales</span><span class="chip">Cercle</span><span class="chip">Œuf</span><span class="chip">Gaussienne</span></div>
+      <ul>
+        <li>Zones de l'anthropologue Edward T. Hall : <strong>intime</strong> (0–45 cm), <strong>personnelle</strong> (45 cm–1,2 m), <strong>sociale</strong> (1,2–3,6 m). La zone dans laquelle entre le robot s'allume.</li>
+      </ul>
+      <div class="models">
+        <div class="model"><h3>Cercle</h3><p>La même distance dans toutes les directions.</p></div>
+        <div class="model"><h3>Œuf</h3><p>Plus grand devant la personne, plus court derrière.</p></div>
+        <div class="model"><h3>Gaussienne</h3><p>Modèle de Kirby : une gêne qui s'allonge devant les gens qui marchent vite.</p></div>
+      </div>
+      <p class="warning"><strong>Important :</strong> le robot n'a pas été entraîné avec ces zones. Sa seule règle sociale est « pas à moins de 20 cm ». Les zones servent à juger son comportement avec des critères humains.</p>
+    </div>
+  </section>
+
+  <section class="step" id="reactions">
+    <span class="num">8</span>
+    <div class="step-body">
+      <h2 class="title">Les réactions</h2>
+      <div class="on-screen">À l'écran : <span class="chip">Réactions</span> visages au-dessus des têtes</div>
+      <ul>
+        <li>Un visage apparaît quand le robot entre dans la zone d'une personne : <strong>gêné</strong> (zone personnelle), <strong>fâché</strong> (zone intime), <strong>surpris</strong> (contact).</li>
+        <li>Il dépend du modèle choisi (cercle, œuf ou gaussienne).</li>
+        <li>C'est une illustration : dans la simulation, les personnes ne réagissent pas.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="step" id="limites">
+    <span class="num">9</span>
+    <div class="step-body">
+      <h2 class="title">Limites, si on vous pose la question</h2>
+      <ul>
+        <li>C'est une simulation, pas un vrai robot. Les personnes simulées ne l'évitent pas et ne changent pas d'avis.</li>
+        <li>Le robot connaît parfaitement la position et la vitesse de chacun : pas de caméra, pas d'erreur de mesure.</li>
+        <li>Il n'y avait pas de murs pendant l'entraînement : sortir de la salle compte comme une collision, et les murs sont seulement dessinés.</li>
+        <li>« Réussi » inclut aussi des passages très près des gens (moins de 45 cm).</li>
+        <li>L'entraînement complet a pris environ 1 h 40 sur un ordinateur portable.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="practical">
+    <h2>Pratique</h2>
+    <dl>
+      <dt>Lancer</dt><dd><code>run.sh</code> (ou <code>run.bat</code> sous Windows). En secours, sans personnages 3D : <code>index.html?simple=1</code>.</dd>
+      <dt>Commandes</dt><dd>Curseur ou <kbd>↑</kbd> <kbd>↓</kbd> : moment de l'entraînement · <kbd>Espace</kbd> : pause · <kbd>R</kbd> : revenir au début · souris : tourner et zoomer.</dd>
+      <dt>Cases à cocher</dt><dd>Chaque calque s'affiche ou se masque. Gardez 2 ou 3 calques à la fois, sinon le sol devient chargé.</dd>
+      <dt>Parcours</dt><dd>Essai 0 → 3 000 → 5 500 → 13 000 avec <span class="chip">Choix du robot</span> et <span class="chip">Courbes</span> ; puis <span class="chip">Attention</span> ; puis <span class="chip">Distances sociales</span> en changeant de modèle.</dd>
+    </dl>
+  </div>
+</main>
+
+</body>
+</html>
