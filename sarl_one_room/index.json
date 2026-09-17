@@ -5,6 +5,147 @@
  "seeds": [
   5
  ],
+ "simulation": {
+  "time_step": 0.25,
+  "episode_length": 100,
+  "map": [
+   -5.0,
+   5.0,
+   -5.0,
+   5.0
+  ],
+  "margin": 0.6,
+  "v_pref": 1.0,
+  "goal_threshold": 0.3,
+  "goal_radius": 0.3,
+  "success_reward": 1.0,
+  "collision_reward": -0.25,
+  "discomfort_dist": 0.2,
+  "discomfort_factor": 0.5,
+  "human": {
+   "max_speed": 1.0,
+   "radius": 0.3,
+   "goal_radius": 0.4,
+   "max_rotation_speed": 1.571,
+   "speed_threshold": 0.005,
+   "orca": {
+    "neighbor_dist": 1.2,
+    "time_horizon": 5.0
+   }
+  }
+ },
+ "rooms": {
+  "5": {
+   "dt": 0.25,
+   "scene": {
+    "goal": [
+     3.664,
+     2.338
+    ],
+    "goal_radius": 0.3,
+    "bounds": [
+     -5.0,
+     5.0,
+     -5.0,
+     5.0
+    ],
+    "walls": [],
+    "objects": []
+   },
+   "robot": {
+    "radius": 0.3,
+    "start": [
+     -4.285,
+     -2.493,
+     -1.386
+    ],
+    "goal": [
+     3.664,
+     2.338
+    ]
+   },
+   "humans": [
+    {
+     "id": 1,
+     "radius": 0.3,
+     "start": [
+      -3.179,
+      1.034,
+      -2.346
+     ],
+     "goal": [
+      -1.748,
+      0.907
+     ]
+    },
+    {
+     "id": 2,
+     "radius": 0.3,
+     "start": [
+      3.268,
+      -2.557,
+      -1.788
+     ],
+     "goal": [
+      -4.37,
+      1.566
+     ]
+    },
+    {
+     "id": 3,
+     "radius": 0.3,
+     "start": [
+      3.277,
+      -1.854,
+      2.9
+     ],
+     "goal": [
+      -1.427,
+      -1.672
+     ]
+    },
+    {
+     "id": 4,
+     "radius": 0.3,
+     "start": [
+      1.565,
+      -2.598,
+      2.771
+     ],
+     "goal": [
+      2.803,
+      -0.169
+     ]
+    },
+    {
+     "id": 5,
+     "radius": 0.3,
+     "start": [
+      4.106,
+      3.465,
+      -1.264
+     ],
+     "goal": [
+      -1.621,
+      -0.165
+     ]
+    },
+    {
+     "id": 6,
+     "radius": 0.3,
+     "start": [
+      -2.94,
+      -3.118,
+      -2.732
+     ],
+     "goal": [
+      1.801,
+      -3.898
+     ]
+    }
+   ]
+  }
+ },
  "checkpoints": [
   {
    "checkpoint": 0,

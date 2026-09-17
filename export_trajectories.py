@@ -62,6 +62,37 @@ def capture_scene(u) -> dict:
             "walls": walls, "objects": objects}
 
 
+def capture_room(env, seed: int) -> dict:
+    """The room as it starts: layout, where the robot and every person stand, and where they head.
+    The viewer simulates everything from there on."""
+    env.reset(seed=seed)
+    u = env.unwrapped
+    return {
+        "dt": r3(u.TIMESTEP),
+        "scene": capture_scene(u),
+        "robot": {"radius": r3(u.ROBOT_RADIUS), "start": [r3(u.robot.x), r3(u.robot.y), r3(u.robot.orientation)],
+                  "goal": [r3(u.robot.goal_x), r3(u.robot.goal_y)]},
+        "humans": [{"id": int(h.id), "radius": r3(h.width / 2), "start": [r3(h.x), r3(h.y), r3(h.orientation)],
+                    "goal": [r3(h.goal_x), r3(h.goal_y)]} for h in all_humans(u)],
+    }
+
+
+def simulation_settings(u) -> dict:
+    """Rules the viewer needs to run the room itself: robot dynamics and rewards, people's ORCA
+    settings, and how new goals are drawn."""
+    return {
+        "time_step": r3(u.TIMESTEP), "episode_length": int(u.EPISODE_LENGTH),
+        "map": [r3(-u.MAP_X / 2), r3(u.MAP_X / 2), r3(-u.MAP_Y / 2), r3(u.MAP_Y / 2)],
+        "margin": r3(u.MARGIN),
+        "v_pref": r3(u.MAX_ADVANCE_ROBOT), "goal_threshold": r3(u.GOAL_THRESHOLD), "goal_radius": r3(u.GOAL_RADIUS),
+        "success_reward": 1.0, "collision_reward": -0.25, "discomfort_dist": 0.2, "discomfort_factor": 0.5,
+        "human": {"max_speed": r3(u.MAX_ADVANCE_HUMAN), "radius": r3(u.HUMAN_DIAMETER / 2),
+                  "goal_radius": r3(u.HUMAN_GOAL_RADIUS), "max_rotation_speed": r3(math.pi / 2),
+                  "speed_threshold": r3(u.SPEED_THRESHOLD),
+                  "orca": {"neighbor_dist": r3(2 * u.HUMAN_DIAMETER), "time_horizon": 5.0}},
+    }
+
+
 def run_episode(env, agent, seed: int) -> dict:
     obs = env.reset(seed=seed)
     u = env.unwrapped
@@ -192,6 +223,7 @@ def main():
     a.config = a.config or run_config_for(a.checkpoint_dir) or str(DEFAULT_CONFIG)
     print(f"scenario: {a.config}")
     env = open_env(a.config)
+    env.still_action = STILL_ACTION
     seeds = a.seeds or select_seeds(env, STILL_ACTION, a.first_seed, a.episodes,
                                     a.min_start_goal_dist, a.grace_steps)
     a.out.mkdir(parents=True, exist_ok=True)
@@ -199,7 +231,11 @@ def main():
     eval_csv = a.evaluation or a.checkpoint_dir.resolve().parent / "evaluation.csv"
     evaluation = load_evaluation(eval_csv) if eval_csv.exists() else {}
     print(f"learning curves: {eval_csv if evaluation else 'none (run training/evaluate_checkpoints.py first)'}")
-    index = {"source": "socnavgym", "algorithm": "sarl", "config": Path(a.config).name, "seeds": seeds, "checkpoints": []}
+    index = {"source": "socnavgym", "algorithm": "sarl", "config": Path(a.config).name, "seeds": seeds,
+             "simulation": None, "rooms": {}, "checkpoints": []}
+    for seed in seeds:
+        index["rooms"][str(seed)] = capture_room(env, seed)
+    index["simulation"] = simulation_settings(env.unwrapped)
 
     for c, (steps, path) in enumerate(checkpoints):
         agent = SarlAgent(path, env)

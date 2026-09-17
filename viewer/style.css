@@ -79,3 +79,10 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #1b1d22; col
 .help-close { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 0;
   background: #1c222c; color: #fff; font: 700 26px/1 "DejaVu Sans", Arial, sans-serif; cursor: pointer; z-index: 1; }
 .help-close:hover, .help-close:focus-visible { background: #0a78c8; outline: none; }
+.live-bar { position: fixed; left: 50%; bottom: 136px; transform: translateX(-50%); display: flex;
+  align-items: center; gap: 18px; font-size: 24px; background: rgba(0,0,0,.55); padding: 10px 14px 10px 22px;
+  border-radius: 12px; max-width: calc(100vw - 80px); }
+#hint { pointer-events: none; }
+.text-button { font: inherit; font-size: 22px; padding: 10px 16px; border-radius: 10px; border: 0;
+  background: #4fb3ff; color: #1b1d22; cursor: pointer; white-space: nowrap; }
+.text-button:hover, .text-button:focus-visible { background: #7fc9ff; outline: none; }

@@ -33,6 +33,7 @@ python export_trajectories.py training/runs/sarl_humans/checkpoints --seeds 5
 | `fast_geometry.py` | Runtime replacement for SocNavGym's shapely collision checks, about 5x faster steps and identical results on 20 000 random tests. The installed package is not modified. |
 | `sarl/` | Everything specific to SARL: environment wrapper, policy, reward, training loop. See [`sarl/README.md`](sarl/README.md). |
 | `evaluate_checkpoints.py` | Greedy evaluation of every checkpoint on fixed unseen rooms, writes `evaluation.csv`. |
+| `export_weights.py` | Writes `viewer/weights.js`, the network at every checkpoint, which drives the robot of the live room in the viewer. |
 | `runs/sarl_humans/` | Checkpoints, per-episode log, validation log, evaluation results and run settings. |
 
 ## Design choices

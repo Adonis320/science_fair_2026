@@ -119,12 +119,13 @@ code { font: 500 14px/1 var(--mono); }
 
   <div class="pitch">
     <h2>En 30 secondes</h2>
-    <p>Un robot virtuel apprend, par essais et erreurs, à traverser une salle pleine de gens pour atteindre un point, sans les heurter. Rien n'est inventé : chaque trajet est rejoué à partir d'une vraie simulation (SocNavGym) et d'un vrai réseau de neurones (SARL), sauvegardé à différents moments de son apprentissage.</p>
+    <p>Un robot virtuel apprend, par essais et erreurs, à traverser une salle pleine de gens pour atteindre un point, sans les heurter. Tout se passe en direct : les personnes marchent avec un algorithme classique de déplacement de foule (ORCA), et le robot est piloté par un vrai réseau de neurones (SARL), entraîné dans le simulateur SocNavGym et sauvegardé à différents moments de son apprentissage.</p>
   </div>
 
   <nav class="order" aria-label="Ordre de présentation">
     <a href="#scene">1 Scène</a><a href="#curseur">2 Curseur</a><a href="#recompenses">3 Récompenses</a><a href="#courbe">4 Courbe</a>
-    <a href="#choix">5 Choix</a><a href="#attention">6 Attention</a><a href="#distances">7 Distances</a><a href="#reactions">8 Réactions</a><a href="#limites">9 Limites</a>
+    <a href="#choix">5 Choix</a><a href="#attention">6 Attention</a><a href="#distances">7 Distances</a><a href="#reactions">8 Réactions</a>
+    <a href="#objectif">9 Objectif</a><a href="#limites">10 Limites</a>
   </nav>
 
   <section class="step" id="scene">
@@ -132,11 +133,16 @@ code { font: 500 14px/1 var(--mono); }
     <div class="step-body">
       <h2 class="title">La scène</h2>
       <ul>
-        <li>Salle de 10 × 10 m, 6 personnes qui marchent vers des destinations au hasard.</li>
+        <li>Salle de 10 × 10 m, 6 personnes qui marchent en continu. Dès qu'une personne arrive quelque part, elle repart ailleurs.</li>
         <li>Le robot (type TurtleBot, flèche jaune = sa direction) doit atteindre le <strong>cercle vert</strong>.</li>
         <li>Les personnes ne s'écartent pas pour lui : c'est au robot d'être poli.</li>
-        <li>C'est <strong>toujours la même salle</strong>, avec les mêmes personnes aux mêmes endroits : on compare le robot à lui-même.</li>
-        <li>Sortir de la salle compte comme une collision (le mur).</li>
+        <li>La salle ne s'arrête jamais :
+          <ul>
+            <li>objectif atteint : <strong>Réussi !</strong>, et le robot reçoit un nouvel objectif ;</li>
+            <li>personne touchée ou sortie de la salle : <strong>Collision !</strong>, le robot s'arrête un instant puis réapparaît ailleurs ;</li>
+            <li>25 secondes sans atteindre l'objectif : <strong>Temps écoulé</strong>, et il reçoit un nouvel objectif.</li>
+          </ul>
+        </li>
       </ul>
     </div>
   </section>
@@ -147,17 +153,16 @@ code { font: 500 14px/1 var(--mono); }
       <h2 class="title">Le curseur et le numéro d'essai</h2>
       <div class="on-screen">À l'écran : <span class="chip">Entraînement</span><span class="chip">Essai 13 000</span></div>
       <ul>
-        <li>Chaque position du curseur = le « cerveau » du robot sauvegardé après N essais.</li>
-        <li><strong>Essai 0</strong> : il ne sait rien. Il n'avance pas vers le but, le temps s'écoule.</li>
-        <li><strong>Essais 1 à 3 000</strong> : il imite un robot « professeur » (un algorithme classique, ORCA). Il bouge, mais sort vite de la salle.</li>
+        <li>Chaque position du curseur = le « cerveau » du robot sauvegardé après N essais d'entraînement.</li>
+        <li>Changer de position change le cerveau <strong>sans arrêter la salle</strong> : le même robot, au même endroit, se met à se comporter autrement.</li>
+        <li><strong>Essai 0</strong> : il ne sait rien. Il n'avance pas vers le but et le temps s'écoule.</li>
+        <li><strong>Essais 1 à 3 000</strong> : il imite un robot « professeur » (un algorithme classique, ORCA). Il avance vers le but mais heurte souvent les gens ou sort de la salle.</li>
         <li><strong>Essais 3 000 à 13 000</strong> : il s'entraîne seul et apprend de ses erreurs.</li>
-        <li>En fin de trajet : <strong>Réussi !</strong>, <strong>Collision !</strong> ou <strong>Temps écoulé</strong>.</li>
       </ul>
       <div class="figures">
-        <span class="fig">Collisions jusqu'à <em>5 500</em> essais</span>
-        <span class="fig">1<sup>re</sup> réussite à <em>6 025</em> · 15 s</span>
-        <span class="fig dip">Retouche quelqu'un à <em>7 900</em></span>
-        <span class="fig">Traverse en <em>11 s</em> à 13 000</span>
+        <span class="fig">Entraîné, 10 min en direct : <em>60</em> réussites</span>
+        <span class="fig dip"><em>14</em> collisions</span>
+        <span class="fig">Non entraîné : <em>0</em> réussite</span>
       </div>
     </div>
   </section>
@@ -183,10 +188,11 @@ code { font: 500 14px/1 var(--mono); }
       <h2 class="title">La courbe « Progrès du robot »</h2>
       <div class="on-screen">À l'écran : <span class="chip">Courbes</span><span class="chip">Objectif atteint</span><span class="chip">Collision</span></div>
       <ul>
-        <li>Mesurée sur <strong>40 salles de test différentes</strong> à chaque sauvegarde, pas seulement sur celle affichée.</li>
-        <li><strong>Vert</strong> : % d'essais où il atteint l'objectif. <strong>Rouge</strong> : % de collisions. Le repère suit le curseur.</li>
+        <li>Mesurée à l'avance sur <strong>40 salles de test différentes</strong> à chaque sauvegarde. Le repère suit le curseur.</li>
+        <li><strong>Vert</strong> : % d'essais où il atteint l'objectif. <strong>Rouge</strong> : % de collisions.</li>
         <li><strong>Ce n'est pas linéaire</strong> : il progresse, régresse, puis se stabilise.</li>
         <li>L'axe n'est pas à l'échelle : il y a plus de sauvegardes au début, là où il apprend le plus vite.</li>
+        <li>En direct, le robot entraîné a plus de collisions que sur la courbe : les objectifs tombent n'importe où, parfois au milieu des gens.</li>
       </ul>
       <div class="figures">
         <span class="fig">Départ <em>0 %</em></span>
@@ -253,20 +259,34 @@ code { font: 500 14px/1 var(--mono); }
       <ul>
         <li>Un visage apparaît quand le robot entre dans la zone d'une personne : <strong>gêné</strong> (zone personnelle), <strong>fâché</strong> (zone intime), <strong>surpris</strong> (contact).</li>
         <li>Il dépend du modèle choisi (cercle, œuf ou gaussienne).</li>
-        <li>C'est une illustration : dans la simulation, les personnes ne réagissent pas.</li>
+        <li>C'est une illustration : dans la simulation, les personnes ne réagissent pas au robot.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="step" id="objectif">
+    <span class="num">9</span>
+    <div class="step-body">
+      <h2 class="title">Déplacer l'objectif</h2>
+      <div class="on-screen">À l'écran : « Cliquez sur le sol pour déplacer l'objectif »</div>
+      <ul>
+        <li><strong>Un clic sur le sol</strong> place l'objectif à cet endroit. Le robot change aussitôt de direction.</li>
+        <li>À faire faire aux visiteurs : mettre l'objectif derrière un groupe de personnes, puis comparer le robot entraîné et le robot non entraîné avec le curseur.</li>
+        <li>Faire glisser la souris tourne la caméra au lieu de déplacer l'objectif.</li>
       </ul>
     </div>
   </section>
 
   <section class="step" id="limites">
-    <span class="num">9</span>
+    <span class="num">10</span>
     <div class="step-body">
       <h2 class="title">Limites, si on vous pose la question</h2>
       <ul>
-        <li>C'est une simulation, pas un vrai robot. Les personnes simulées ne l'évitent pas et ne changent pas d'avis.</li>
+        <li>C'est une simulation, pas un vrai robot. Les personnes simulées ne l'évitent pas.</li>
         <li>Le robot connaît parfaitement la position et la vitesse de chacun : pas de caméra, pas d'erreur de mesure.</li>
         <li>Il n'y avait pas de murs pendant l'entraînement : sortir de la salle compte comme une collision, et les murs sont seulement dessinés.</li>
-        <li>« Réussi » inclut aussi des passages très près des gens (moins de 45 cm).</li>
+        <li>« Réussi » compte dès que l'objectif est atteint, même si le robot est passé très près de quelqu'un.</li>
+        <li>Les personnes suivent les mêmes règles que dans SocNavGym, recalculées en direct dans le navigateur.</li>
         <li>L'entraînement complet a pris environ 1 h 40 sur un ordinateur portable.</li>
       </ul>
     </div>
@@ -276,9 +296,9 @@ code { font: 500 14px/1 var(--mono); }
     <h2>Pratique</h2>
     <dl>
       <dt>Lancer</dt><dd><code>run.sh</code> (ou <code>run.bat</code> sous Windows). En secours, sans personnages 3D : <code>index.html?simple=1</code>.</dd>
-      <dt>Commandes</dt><dd>Curseur ou <kbd>↑</kbd> <kbd>↓</kbd> : moment de l'entraînement · <kbd>Espace</kbd> : pause · <kbd>R</kbd> : revenir au début · souris : tourner et zoomer.</dd>
+      <dt>Commandes</dt><dd>Curseur ou <kbd>↑</kbd> <kbd>↓</kbd> : moment de l'entraînement · clic sur le sol : déplacer l'objectif · <kbd>Espace</kbd> : pause · <kbd>R</kbd> : remettre la salle à zéro · souris : tourner et zoomer.</dd>
       <dt>Cases à cocher</dt><dd>Chaque calque s'affiche ou se masque. Gardez 2 ou 3 calques à la fois, sinon le sol devient chargé.</dd>
-      <dt>Parcours</dt><dd>Essai 0 → 3 000 → 5 500 → 13 000 avec <span class="chip">Choix du robot</span> et <span class="chip">Courbes</span> ; puis <span class="chip">Attention</span> ; puis <span class="chip">Distances sociales</span> en changeant de modèle.</dd>
+      <dt>Parcours</dt><dd>Essai 0 → 3 000 → 5 500 → 13 000 avec <span class="chip">Choix du robot</span> et <span class="chip">Courbes</span> ; puis <span class="chip">Attention</span> ; puis <span class="chip">Distances sociales</span> en changeant de modèle ; enfin, laisser les visiteurs déplacer l'objectif.</dd>
     </dl>
   </div>
 </main>

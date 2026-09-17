@@ -24,6 +24,14 @@ const CONFIG = {
   // Display only: people whose centres come closer than this are nudged apart on screen so the
   // character models do not pass through each other. The recorded data is not changed.
   humanVisualSeparation: 0.5,  // metres, 0 disables
+  liveGoalMargin: 0.4,         // how close to the walls a visitor may place the goal, metres
+  // Live room (world.js): the simulation runs without end at the checkpoint on the slider.
+  world: {
+    minGoalDistance: 5,        // metres between the robot and each new goal it gets
+    collisionPause: 1.5,       // seconds the robot stays put after a collision, before reappearing
+    outcomeSeconds: 2,         // how long "Réussi !", "Collision !" or "Temps écoulé" stays on screen
+    movesPerFrame: 27,         // moves scored per frame while the robot thinks (81 per decision)
+  },
   decorativeWalls: true,       // draw walls around rooms that have none in the simulation (display only)
   // "Options" fan: every move the robot scored at this step, drawn on the floor in front of it.
   // Direction = the move's turn, distance = its speed (exaggerated so it is visible).
@@ -642,26 +650,25 @@ const optionFan = (() => {
 })();
 scene.add(optionFan);
 
-function updateOptionFan(ep, k, visible) {
-  const decision = visible && ep.decisions ? ep.decisions.steps[k] : null;
-  optionFan.visible = !!decision;
-  if (!decision) return;
-  const [rx, ry, heading] = ep.robot.frames[k];
+/** Draws the scored moves around the robot. `heading` is the robot's heading when it decided;
+    `key` changes whenever the decision does, so unchanged decisions are not redrawn. */
+function drawOptionFan(actions, decision, heading, robotRadius, key, visible) {
+  optionFan.visible = !!(visible && decision);
+  if (!optionFan.visible) return;
   optionFan.position.set(robotMesh.position.x, 0, robotMesh.position.z);
-  optionFan.rotation.y = heading;                    // moves are relative to the heading when deciding
-  const key = state.checkpoint + ':' + state.episode + ':' + k;
+  optionFan.rotation.y = heading;
   const u = optionFan.userData;
   if (u.shownKey === key) return;
   u.shownKey = key;
 
-  const cfg = CONFIG.options, actions = ep.decisions.actions, values = decision.values;
+  const cfg = CONFIG.options, values = decision.values;
   const vmax = Math.max(...actions.map(a => a[0])) || 1;
   const lo = Math.min(...values), hi = Math.max(...values);
   const m = new THREE.Matrix4(), c = new THREE.Color();
   const place = (i) => {
     const [v, turn] = actions[i];
-    if (v === 0) return [-(ep.robot.radius + cfg.gap * 0.6), 0];      // "stay still": just behind the robot
-    const d = ep.robot.radius + cfg.gap + (v / vmax) * cfg.reach;
+    if (v === 0) return [-(robotRadius + cfg.gap * 0.6), 0];        // "stay still": just behind the robot
+    const d = robotRadius + cfg.gap + (v / vmax) * cfg.reach;
     return [d * Math.cos(turn), -d * Math.sin(turn)];               // robot frame -> three local (x, z)
   };
   actions.forEach((a, i) => {
@@ -677,6 +684,13 @@ function updateOptionFan(ep, k, visible) {
   const len = Math.hypot(cx, cz);
   u.line.scale.x = Math.max(0.001, len - cfg.dotRadius * 2);
   u.line.rotation.y = -Math.atan2(cz, cx);
+}
+
+function updateOptionFan(ep, k, visible) {
+  const decision = ep.decisions ? ep.decisions.steps[k] : null;
+  const heading = ep.robot.frames[k] ? ep.robot.frames[k][2] : 0;
+  drawOptionFan(ep.decisions ? ep.decisions.actions : [], decision, heading, ep.robot.radius,
+                state.checkpoint + ':' + state.episode + ':' + k, visible);
 }
 
 function buildOptionsLegend() {
@@ -701,19 +715,26 @@ function makeAttentionHalo(bodyRadius) {
   halo.renderOrder = 3;
   return halo;
 }
-function updateAttention(ep, f, visible) {
-  const att = visible ? ep.attention : null;
+/** Halo strength per person, blending two sets of attention weights (t from 0 to 1). */
+function drawAttention(weightsA, weightsB, t, visible) {
+  const n = humanMeshes.length;
   humanMeshes.forEach((m, i) => {
     const halo = m.userData.attentionHalo;
     if (!halo) return;
-    halo.visible = !!att;
-    if (!att) return;
-    const k = Math.min(Math.floor(f), att.length - 1), k2 = Math.min(k + 1, att.length - 1), t = Math.min(1, f - k);
-    const wa = att[k] ? att[k][i] : 0, wb = att[k2] ? att[k2][i] : wa;
-    const strength = Math.min(1, (wa + (wb - wa) * t) * ep.humans.length / 2);
+    halo.visible = !!(visible && weightsA);
+    if (!halo.visible) return;
+    const wa = weightsA[i], wb = weightsB ? weightsB[i] : wa;
+    const strength = Math.min(1, (wa + (wb - wa) * t) * n / 2);
     halo.material.opacity = 0.08 + 0.87 * strength;
     halo.scale.setScalar(0.85 + 0.3 * strength);
   });
+}
+
+function updateAttention(ep, f, visible) {
+  const att = ep.attention;
+  if (!att) { drawAttention(null, null, 0, false); return; }
+  const k = Math.min(Math.floor(f), att.length - 1), k2 = Math.min(k + 1, att.length - 1);
+  drawAttention(att[k], att[k2] || att[k], Math.min(1, f - k), visible);
 }
 
 // ---------------------------------------------------------------------------
@@ -1035,7 +1056,7 @@ function fitCamera(ep) {
 // Per-episode scene objects (walls, goal, objects) are rebuilt when the episode changes.
 const episodeGroup = new THREE.Group();
 scene.add(episodeGroup);
-let robotMesh = null, humanMeshes = [];
+let robotMesh = null, humanMeshes = [], goalMesh = null;
 
 function clearGroup(g) {
   while (g.children.length) {
@@ -1080,6 +1101,7 @@ function buildEpisode(ep) {
   goal.rotation.x = -Math.PI / 2;
   goal.position.set(gx, 0.01, -gy);
   episodeGroup.add(goal);
+  goalMesh = goal;
 
   robotMesh = makeRobot(ep.robot.radius);
   episodeGroup.add(robotMesh);
@@ -1095,6 +1117,152 @@ function buildEpisode(ep) {
     return m;
   });
 }
+
+// ---------------------------------------------------------------------------
+// Live room: people walk with ORCA and the robot decides with SARL, without end (world.js, sarl.js)
+// ---------------------------------------------------------------------------
+const worldAvailable = typeof World !== 'undefined' && typeof SARL !== 'undefined' && SARL.available
+  && !!data.index.simulation && !!data.index.rooms;
+
+const sim = {
+  world: null, room: null, runner: null, job: null,
+  clock: 0, prev: null, curr: null,
+  shownDecision: null, shownHeading: 0, shownKey: 0,
+  attentionPrev: null, attentionCurr: null,
+  flashKind: null, flashUntil: 0,
+};
+
+function snapshot(w) {
+  return {
+    robot: { x: w.robot.x, y: w.robot.y, theta: w.robot.theta, active: w.robotActive },
+    humans: w.humans.map(h => ({ x: h.x, y: h.y, theta: h.theta, speed: h.speed })),
+    goal: [w.robot.gx, w.robot.gy],
+  };
+}
+
+/** Puts the room back in its starting state, with the network of the checkpoint on the slider. */
+function resetWorld() {
+  const seed = episodeAt(state.checkpoint, state.episode).seed;
+  sim.room = data.index.rooms[String(seed)];
+  sim.world = new World(sim.room, { ...data.index.simulation, collision_pause: CONFIG.world.collisionPause }, seed);
+  sim.prev = sim.curr = snapshot(sim.world);
+  sim.clock = 0;
+  sim.job = null;
+  sim.shownDecision = null;
+  sim.attentionPrev = sim.attentionCurr = null;
+  sim.flashKind = null;
+  sim.runner = SARL.runnerFor(state.checkpoint, data.index.simulation);
+  state.builtFor = null;
+}
+
+function useCheckpointNetwork() {
+  sim.runner = SARL.runnerFor(state.checkpoint, data.index.simulation);
+  sim.job = null;                                     // a pending decision belongs to the previous network
+}
+
+/** Layout the scene builder needs: the room, its people and the current goal. */
+function worldLayout() {
+  return {
+    seed: episodeAt(state.checkpoint, state.episode).seed,
+    scene: { ...sim.room.scene, goal: sim.curr.goal },
+    robot: { radius: sim.room.robot.radius },
+    humans: sim.room.humans.map(h => ({ id: h.id, radius: h.radius })),
+  };
+}
+
+/** Moves the live room forward by `elapsed` seconds. The robot thinks over several frames. */
+function advanceWorld(elapsed) {
+  const w = sim.world, dt = w.s.time_step;
+  sim.clock += elapsed;
+  if (!sim.job) {
+    const r = w.robot;
+    const atGoal = Math.hypot(r.x - r.gx, r.y - r.gy) < r.radius;
+    sim.job = (!w.robotActive || atGoal)
+      ? { result: { index: 0, values: null, attention: null }, work: () => true }
+      : sim.runner.startDecision(w.robotState(), w.peopleState());
+    if (sim.job.result === null || sim.job.result.attention) sim.attentionCurr = null;
+  }
+  sim.job.work(CONFIG.world.movesPerFrame);
+  if (sim.job.result && sim.job.result.attention && !sim.attentionCurr) sim.attentionCurr = sim.job.result.attention;
+  if (sim.clock < dt) return;
+  if (!sim.job.result) { sim.clock = dt; return; }    // still thinking: hold on the current step
+
+  const decision = sim.job.result;
+  const heading = w.robot.theta;
+  w.step(sim.runner.actions[decision.index], CONFIG.world.minGoalDistance);
+  sim.job = null;
+  sim.clock = Math.min(sim.clock - dt, dt);
+  sim.prev = sim.curr;
+  sim.curr = snapshot(w);
+  if (!sim.prev.robot.active && sim.curr.robot.active) sim.prev = { ...sim.prev, robot: sim.curr.robot };   // reappeared
+  sim.shownDecision = decision.values ? { values: decision.values, chosen: decision.index } : null;
+  sim.shownHeading = heading;
+  sim.shownKey += 1;
+  sim.attentionPrev = decision.attention || sim.attentionPrev;
+  sim.attentionCurr = null;
+  for (const event of w.events.splice(0)) {
+    sim.flashKind = event.kind;
+    sim.flashUntil = performance.now() + CONFIG.world.outcomeSeconds * 1000;
+  }
+}
+
+/** Draws the live room between the last two steps. */
+function renderWorld(dt) {
+  const s = sim.world.s, a = Math.min(1, sim.clock / s.time_step), P = sim.prev, C = sim.curr;
+  const lerp = (u, v) => u + (v - u) * a;
+  const [x0, x1, y0, y1] = s.map;
+  const rx = Math.min(x1, Math.max(x0, lerp(P.robot.x, C.robot.x)));   // stop at the wall when leaving the room
+  const ry = Math.min(y1, Math.max(y0, lerp(P.robot.y, C.robot.y)));
+  robotMesh.position.set(rx, 0, -ry);
+  robotMesh.rotation.y = lerpAngle(P.robot.theta, C.robot.theta, a);
+  robotMesh.userData.lidar.rotation.y += dt * 12;
+  goalMesh.position.set(C.goal[0], 0.01, -C.goal[1]);
+
+  C.humans.forEach((h, i) => {
+    const m = humanMeshes[i], p = P.humans[i];
+    m.position.set(lerp(p.x, h.x), 0, -lerp(p.y, h.y));
+    m.rotation.y = lerpAngle(p.theta, h.theta, a);
+    m.userData.speed = h.speed;
+    animateHuman(m, state.playing ? h.speed : 0, state.playing ? dt * CONFIG.playbackSpeed : 0);
+  });
+  separateHumans(humanMeshes, CONFIG.humanVisualSeparation);
+  const levels = humanMeshes.map((m, i) => personalSpaceLevel(m, sim.room.humans[i].radius, robotMesh.position, sim.room.robot.radius));
+  updateProxemicZones(levels);
+  updateReactions(levels, clock.elapsedTime, ui.showReactions.checked);
+  drawAttention(sim.attentionPrev, sim.attentionCurr || sim.attentionPrev, a, ui.showAttention.checked);
+  drawOptionFan(sim.runner.actions, sim.shownDecision, sim.shownHeading,
+                sim.room.robot.radius, sim.shownKey, ui.showOptions.checked && C.robot.active);
+
+  const flashing = sim.flashKind && performance.now() < sim.flashUntil;
+  ui.outcome.className = 'outcome ' + (sim.flashKind || '') + (flashing ? ' show' : '');
+  ui.outcome.textContent = CONFIG.outcomeText[sim.flashKind] || '';
+}
+
+// Click on the floor to place the goal there (a drag turns the camera instead).
+const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const pointer = new THREE.Vector2();
+const raycaster = new THREE.Raycaster();
+let pressedAt = null;
+
+renderer.domElement.addEventListener('pointerdown', (ev) => { pressedAt = { x: ev.clientX, y: ev.clientY }; });
+renderer.domElement.addEventListener('pointerup', (ev) => {
+  if (!worldAvailable || !pressedAt) return;
+  const moved = Math.hypot(ev.clientX - pressedAt.x, ev.clientY - pressedAt.y);
+  pressedAt = null;
+  if (moved > 6) return;
+  pointer.set((ev.clientX / window.innerWidth) * 2 - 1, -(ev.clientY / window.innerHeight) * 2 + 1);
+  raycaster.setFromCamera(pointer, camera);
+  const hit = new THREE.Vector3();
+  if (!raycaster.ray.intersectPlane(floorPlane, hit)) return;
+  const [x0, x1, y0, y1] = data.index.simulation.map;
+  const margin = CONFIG.liveGoalMargin;
+  const x = Math.min(x1 - margin, Math.max(x0 + margin, hit.x));
+  const y = Math.min(y1 - margin, Math.max(y0 + margin, -hit.z));
+  if (Math.abs(hit.x - x) > 1 || Math.abs(-hit.z - y) > 1) return;      // clicked well outside the room
+  sim.world.setRobotGoal(x, y);
+  sim.curr.goal = [x, y];
+  sim.job = null;                                     // decide again towards the new goal
+});
 
 // ---------------------------------------------------------------------------
 // Playback state
@@ -1115,6 +1283,8 @@ const ui = {
   attentionToggle: document.getElementById('attention-toggle'),
   attentionLegend: document.getElementById('attention-legend'),
   showReactions: document.getElementById('show-reactions'),
+  liveBar: document.getElementById('live-bar'),
+  hint: document.getElementById('hint'),
   rewardsToggle: document.getElementById('rewards-toggle'),
   rewards: document.getElementById('rewards'),
   optionsToggle: document.getElementById('options-toggle'),
@@ -1153,6 +1323,7 @@ ui.showOptions.addEventListener('change', () => {
   if (!ui.showOptions.checked) optionFan.visible = false;   // immediately, even between frames
   ui.showOptions.blur();
 });
+updateHint();
 ui.showCurves.checked = CONFIG.curves.showByDefault;
 ui.curves.hidden = !ui.showCurves.checked;
 buildCurvesPanel();
@@ -1174,6 +1345,7 @@ function setEpisode(c, e) {
   state.checkpoint = (c + nCheckpoints) % nCheckpoints;
   state.episode = (e + nEpisodes) % nEpisodes;
   state.time = 0;
+  if (sim.world) useCheckpointNetwork();        // the room keeps going with this stage of training
   ui.progress.value = state.checkpoint;
   const count = episodeCount(state.checkpoint);
   ui.progressText.textContent = count === null
@@ -1182,6 +1354,11 @@ function setEpisode(c, e) {
   ui.sceneLabel.textContent = `Salle ${state.episode + 1} sur ${nEpisodes}`;
   ui.sceneLabel.hidden = nEpisodes < 2;                // nothing to choose between with a single room
   drawCurves();
+}
+
+function updateHint() {
+  ui.liveBar.hidden = !worldAvailable;
+  ui.hint.textContent = 'Cliquez sur le sol pour déplacer l\u2019objectif';
 }
 
 ui.progress.addEventListener('input', () => setEpisode(+ui.progress.value, state.episode));
@@ -1216,7 +1393,12 @@ window.addEventListener('keydown', (ev) => {
   else if (ev.key === 'ArrowUp') setEpisode(state.checkpoint + 1, state.episode);
   else if (ev.key === 'ArrowDown') setEpisode(state.checkpoint - 1, state.episode);
   else if (ev.key === ' ') { state.playing = !state.playing; ev.preventDefault(); }
-  else if (ev.key === 'r' || ev.key === 'R') { setEpisode(0, 0); state.playing = true; fitCamera(episodeAt(0, 0)); }
+  else if (ev.key === 'r' || ev.key === 'R') {
+    setEpisode(0, 0);
+    if (worldAvailable) resetWorld();
+    state.playing = true;
+    fitCamera(episodeAt(0, 0));
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -1231,11 +1413,22 @@ if (params.get('paused') === '1') state.playing = false;
 
 function tick() {
   const dt = Math.min(0.1, clock.getDelta());
+  if (sim.world) {
+    if (state.builtFor !== 'world') { buildEpisode(worldLayout()); state.builtFor = 'world'; }
+    if (state.playing) advanceWorld(dt * CONFIG.playbackSpeed);
+    renderWorld(dt);
+    ui.play.textContent = state.playing ? '❚❚' : '▶';
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+    return;
+  }
+
+  if (state.playing) state.time += dt * CONFIG.playbackSpeed;
   const ep = episodeAt(state.checkpoint, state.episode);
   const key = state.checkpoint + ':' + state.episode;
   if (state.builtFor !== key) { buildEpisode(ep); state.builtFor = key; }
 
-  if (state.playing) state.time += dt * CONFIG.playbackSpeed;
   const duration = ep.n_steps * ep.dt;
   if (state.time > duration + CONFIG.holdEndSeconds) {
     // Same room, next stage of training; after the last one, move to the next room.
@@ -1278,8 +1471,8 @@ function tick() {
 
   const done = state.time >= duration;
   const shown = CONFIG.outcomeDisplayAs[ep.outcome] || ep.outcome;
-  ui.outcome.className = 'outcome ' + shown + (done ? ' show' : '');
-  ui.outcome.textContent = CONFIG.outcomeText[shown];
+  ui.outcome.className = 'outcome ' + shown + (done && shown ? ' show' : '');
+  ui.outcome.textContent = CONFIG.outcomeText[shown] || '';
   ui.play.textContent = state.playing ? '❚❚' : '▶';
 
   controls.update();
@@ -1290,6 +1483,7 @@ afterResize = () => { fitCamera(episodeAt(state.checkpoint, state.episode)); dra
 afterResize();
 loadHumanModels().then(() => {
   loadingEl.hidden = true;
+  if (worldAvailable) resetWorld();
   clock.getDelta();
   requestAnimationFrame(tick);
 });

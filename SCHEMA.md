@@ -54,6 +54,32 @@ viewer/data.js          # all of the above bundled, see bundle_data.py
 }
 ```
 
+### `simulation` and `rooms` (the live room)
+
+The viewer runs the room itself (`viewer/world.js` for people, `viewer/sarl.js` with the weights from
+`training/export_weights.py` for the robot). `index.json` gives it the rules and each room's start:
+
+```json
+"simulation": {
+  "time_step": 0.25, "episode_length": 100, "map": [-5.0, 5.0, -5.0, 5.0], "margin": 0.6,
+  "v_pref": 1.0, "goal_threshold": 0.3, "goal_radius": 0.3,
+  "success_reward": 1.0, "collision_reward": -0.25, "discomfort_dist": 0.2, "discomfort_factor": 0.5,
+  "human": {"max_speed": 1.0, "radius": 0.3, "goal_radius": 0.4, "max_rotation_speed": 1.571,
+            "speed_threshold": 0.005, "orca": {"neighbor_dist": 1.2, "time_horizon": 5.0}}
+},
+"rooms": {
+  "5": {
+    "dt": 0.25,
+    "scene": { ... },                              // same shape as an episode's scene
+    "robot": {"radius": 0.3, "start": [-4.285, -2.493, -1.386], "goal": [3.664, 2.338]},
+    "humans": [{"id": 1, "radius": 0.3, "start": [x, y, theta], "goal": [gx, gy]}]
+  }
+}
+```
+
+`episode_length` is the number of steps the robot gets to reach a goal before it counts as timed out.
+The ORCA values are SocNavGym's nominal ones; SocNavGym adds random noise to them at every reset.
+
 ## `checkpoint_NNN.json`
 
 ```json
