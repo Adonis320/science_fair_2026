@@ -36,7 +36,7 @@ const CONFIG = {
   // "Options" fan: every move the robot scored at this step, drawn on the floor in front of it.
   // Direction = the move's turn, distance = its speed (exaggerated so it is visible).
   options: {
-    showByDefault: true,
+    showByDefault: false,
     reach: 1.4,                  // metres from the robot's edge for the fastest move
     gap: 0.25,                   // metres between the robot's edge and the slowest moves
     dotRadius: 0.065,
@@ -46,19 +46,19 @@ const CONFIG = {
   // SARL attention: a halo under each person, stronger when the robot weighs that person more.
   // Strength = weight x number of people / 2: equal attention shows every halo at half strength.
   attention: {
-    showByDefault: true,
+    showByDefault: false,
     color: '#0096e6',
   },
   // People's faces when the robot enters their zone (zone keys from `proxemics`).
   reactions: {
-    showByDefault: true,
+    showByDefault: false,
     height: 2.1,                 // metres above the floor
     size: 0.55,                  // metres
     byZone: { personal: 'uneasy', intimate: 'angry', contact: 'shocked' },
   },
   // Reward function panel: SARL's reward (CrowdNav), in plain language.
   rewards: {
-    showByDefault: true,
+    showByDefault: false,
     rules: [
       { value: '+1', tone: 'good', text: 'Atteindre l\u2019objectif' },
       { value: '−0,25', tone: 'bad', text: 'Toucher une personne (fin de l\u2019essai)' },
@@ -69,7 +69,7 @@ const CONFIG = {
   // Learning curves panel. Series values come from each checkpoint's `evaluation` (many test rooms),
   // or its `aggregate` over the exported rooms when no evaluation was exported.
   curves: {
-    showByDefault: true,
+    showByDefault: false,
     series: [
       { key: 'goal', label: 'Objectif atteint', color: '#35c46a', value: e => e.success + e.too_close },
       { key: 'collision', label: 'Collision', color: '#ef4b4b', value: e => e.collision },
@@ -81,7 +81,7 @@ const CONFIG = {
   // Proxemic zones (Edward T. Hall), measured from the person's body edge. Hall's public zone
   // (3.6-7.6 m) is left out: it would cover the whole room. `fill: false` draws only the outline.
   proxemics: {
-    showByDefault: true,
+    showByDefault: false,
     zones: [
       { key: 'intimate', label: 'Intime', range: '0 – 45 cm', to: 0.45, color: 0xe53935, fill: true },
       { key: 'personal', label: 'Personnelle', range: '45 cm – 1,2 m', to: 1.2, color: 0xfb8c00, fill: true },
